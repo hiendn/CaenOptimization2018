@@ -1,6 +1,5 @@
-# CaenOptimization2018
-
-Course contents and notes for the course on optimization theory, taught at Caen in 2018.
+# Optimization Theory for Statistics and Machine Learning
+Course taught by Hien Nguyen, La Trobe University.
 
 ## Progress
 - 14 November 2018
