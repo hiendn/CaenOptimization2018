@@ -4,5 +4,10 @@ Course taught by Hien Nguyen, La Trobe University, at the University of Caen, No
 Register for the course at https://evento.renater.fr/survey/cours-optimization-theory-for-statistics-and-machine-learning-t44hvd12.
 
 ## Progress
-- 14 November 2018
-  - Slides 1--
+- 14 November 2018.
+  - Slides 1--39.
+- 15 November 2018.
+  - Slides 40--.
+  
+## Links to useful resources
+Matrix Cookbook: https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf.
