@@ -11,3 +11,6 @@ Register for the course at https://evento.renater.fr/survey/cours-optimization-t
   
 ## Links to useful resources
 Matrix Cookbook: https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf.
+
+## Error reporting
+If you find any errors in the slides, please let me know via the issues page of the repository: https://github.com/hiendn/CaenOptimization2018/issues.
