@@ -8,7 +8,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## 1. Ordinary least squares
+## Example 1. Ordinary least squares
 
 We begin by generating $n=100$ equally spaced points in the interval between $0$ and $\pi$. Denote the points $\tau_i$ for $i=1,\dots,100$.
 ```{r}
@@ -58,9 +58,9 @@ theta_ols
 ```
 
 Plot the random data with respect to $y$ and $\tau$. Also plot the true model
-$$y\left(\tau\right)=\alpha+\beta_{1}\sin\left(\frac{\pi\tau_{i}}{2}\right)+\beta_{2}\cos\left(\frac{\pi\tau_{i}}{2}\right)+\beta_{3}\sin\left(\pi\tau_{i}\right)+\beta_{4}\cos\left(\pi\tau_{i}\right),$$
+$$y\left(\tau\right)=\alpha+\beta_{1}\sin\left(\frac{\pi\tau}{2}\right)+\beta_{2}\cos\left(\frac{\pi\tau}{2}\right)+\beta_{3}\sin\left(\pi\tau\right)+\beta_{4}\cos\left(\pi\tau\right),$$
 versus the ordinary least squares-estimated model
-$$y^{*}\left(\tau\right)=\alpha^{*}+\beta_{1}^{*}\sin\left(\frac{\pi\tau_{i}}{2}\right)+\beta_{2}^{*}\cos\left(\frac{\pi\tau_{i}}{2}\right)+\beta_{3}^{*}\sin\left(\pi\tau_{i}\right)+\beta_{4}^{*}\cos\left(\pi\tau_{i}\right).$$
+$$y^{*}\left(\tau\right)=\alpha^{*}+\beta_{1}^{*}\sin\left(\frac{\pi\tau}{2}\right)+\beta_{2}^{*}\cos\left(\frac{\pi\tau}{2}\right)+\beta_{3}^{*}\sin\left(\pi\tau\right)+\beta_{4}^{*}\cos\left(\pi\tau\right).$$
 ```{r}
 # Plot the data points
 plot(tau,yy,col='grey',
@@ -68,21 +68,134 @@ plot(tau,yy,col='grey',
 # Plot a grid in the background
 grid()
 # Make a dummy tau sequence for your plotting device
-tt <- seq(0,pi,length.out = 1000)
+dum <- seq(0,pi,length.out = 1000)
 # Initialize a vector of alpha (theta[1]) to store the true model values
 y_true <- rep(theta[1],1000)
 # Add the sin and cos values to your model
 for (kk in 1:2) {
-  y_true <- y_true + theta[2*kk-1]*sin(pi/2*tt*kk) + theta[2*kk]*cos(pi/2*tt*kk)
+  y_true <- y_true + theta[2*kk-1]*sin(pi/2*dum*kk) + theta[2*kk]*cos(pi/2*dum*kk)
 }
 # Plot the true curve on top of your points, in black
-lines(tt,y_true,col='black',lwd=2)
+lines(dum,y_true,col='black',lwd=2)
 # Initialize a vector of alpha* (theta_ols[1]) to store the ols model values
 y_ols <- rep(theta_ols[1],1000)
 # Add the sin and cos values to your model
 for (kk in 1:2) {
-  y_ols <- y_ols + theta_ols[2*kk-1]*sin(pi/2*tt*kk) + theta_ols[2*kk]*cos(pi/2*tt*kk)
+  y_ols <- y_ols + theta_ols[2*kk-1]*sin(pi/2*dum*kk) + theta_ols[2*kk]*cos(pi/2*dum*kk)
 }
-# Plot the true curve on top of your points, in red
-lines(tt,y_ols,col='red',lwd=2,lty=2)
+# Plot the fitted curve on top of your points, in red
+lines(dum,y_ols,col='red',lwd=2,lty=2)
 ```
+
+## Example 2. An MM algorithm for the median
+
+Generate $n=10$ uniformly sampled observations, $y_i$ for $i=1,\dots,n$, between $-1$ and $1$.
+```{r}
+# Set the number of observations to generate
+nn <- 10
+# Set a random seed
+set.seed(200)
+# Generate the uniformly distributed
+yy <- 2*runif(nn)-1
+```
+
+Plot the objective function
+$$f\left(\theta\right)=\sum_{i=1}^{n}\left|y_{i}-\theta\right|,$$
+where $\theta$ is the median variable that is to be estimated.
+```{r}
+# Make a dummy y sequence for your plotting device
+dum <- seq(-2,2,length.out = 1000)
+# Make a function that computes the objective value for any value of theta
+objective <- function(theta) {
+  sum(abs(yy-theta))
+}
+# Evaluate the objective function at each value of dum and store it in ff
+ff <- sapply(dum,objective)
+# Plot the objective function against the dummy sequence
+plot(dum,ff,type='l',lwd=2,
+     xlab=expression(theta),ylab='objective')
+grid()
+```
+
+Consider the approximation to $f$
+$$f_{\epsilon}\left(\theta\right)=\sum_{i=1}^{n}\sqrt{\left(y_{i}-\theta\right)^{2}+\epsilon},$$
+for $\epsilon=0.01$. Plot the approximation and the true objective function together.
+```{r}
+# Plot the objective function again
+plot(dum,ff,type='l',lwd=2,
+     xlab=expression(theta),ylab='objective')
+# Set the value of epsilon
+epsilon <- 0.01
+# Make a function that computes the approximate objective value for any value of theta
+approx_obj <- function(theta) {
+  sum(sqrt((yy-theta)^2+epsilon))
+}
+# Evaluate the approximate objective function at each value of dum and store it in ff_eps
+ff_eps <- sapply(dum,approx_obj)
+# Plot the approximate objective function, in red
+lines(dum,ff_eps,col='red',lwd=2,lty=2)
+```
+
+We can majorize $f_\epsilon$ at $\theta^{\left(r-1\right)}$ using the majorizer
+$$f_{\epsilon}\left(\theta,\theta^{\left(r-1\right)}\right)=\frac{1}{2}\sum_{i=1}^{n}\sqrt{\left(y_{i}-\theta^{\left(r-1\right)}\right)^{2}+\epsilon}+\frac{1}{2}\sum_{i=1}^{n}\frac{\left(y_{i}-\theta\right)^{2}+\epsilon}{\sqrt{\left(y_{i}-\theta^{\left(r-1\right)}\right)^{2}+\epsilon}}.$$
+
+Solving the first order condition
+$$\frac{\partial f_{\epsilon}\left(\cdot,\theta^{\left(r-1\right)}\right)}{\partial\theta}=-\sum_{i=1}^{n}\frac{\left(y_{i}-\theta\right)}{\sqrt{\left(y_{i}-\theta^{\left(r-1\right)}\right)^{2}+\epsilon}}=0,$$
+yields the MM algorithm update scheme
+$$\theta^{(r)}=\frac{\sum_{i=1}^{n}w_{i}^{\left(r-1\right)}y_{i}}{\sum_{i=1}^{n}w_{i}^{\left(r-1\right)}},$$
+where
+$$w_{i}^{\left(r-1\right)}=\frac{1}{\sqrt{\left(y_{i}-\theta^{\left(r-1\right)}\right)^{2}+\epsilon}}.$$
+Implement the MM algorithm for $R=20$ iterations, starting from $\theta^{(0)}=-2$, and plot the solution and the approximate objective value sequences.
+```{r}
+# Initialize the solution sequence with a theta^(0)=-2
+theta_seq <- c(-2)
+# Initialize the approximate objective sequence with the value evaluated at theta = -2
+obj_seq <- c(approx_obj(-2))
+# Set the number of iterations R
+RR <- 20
+# Begin the MM algorithm loop
+for (rr in 2:(RR+1)) {
+  # Compute the vector of weights
+  ww <- 1/sqrt((yy-theta_seq[rr-1])^2+epsilon)
+  # Compute the MM algorithm solution at the current iteration
+  theta_seq[rr] <- sum(ww*yy)/sum(ww)
+  # Compute the current approximate objective value
+  obj_seq[rr] <- approx_obj(theta_seq[rr])
+}
+# Plot the solution sequence
+plot(0:RR,theta_seq,type='b',lwd=2,cex=1,
+     xlab='iteration',ylab=expression(theta))
+grid()
+# Plot the approximate objective value sequence
+plot(0:RR,obj_seq,type='b',lwd=2,cex=1,
+     xlab='iteration',ylab='log-objective')
+grid()
+```
+
+Compare the MM algorithm solution with the value obtained via the `median` function.
+```{r}
+# Print the final MM algorithm solution
+theta_seq[RR+1]
+# Compute the median using the function in R
+median(yy)
+```
+
+## Question 1. Least absolute deviation regression
+
+As with **Example 1** generate $n=100$ covariate vectors 
+$$\bar{\boldsymbol{x}}_{i}^{\top}=\left(1,\sin\left(\frac{\pi\tau_{i}}{2}\right),\cos\left(\frac{\pi\tau_{i}}{2}\right),\sin\left(\pi\tau_{i}\right),\cos\left(\pi\tau_{i}\right)\right),$$
+for $\tau_i$ equally spaced between $0$ and $\pi$, and put the vectors $\bar{\boldsymbol{x}}_{i}^{\top}$ into the matrix $bf{X}$.
+
+Then setting $\boldsymbol{\theta}^{\top}=\left(\alpha,\beta_{1},\beta_{2},\beta_{3},\beta_{4}\right)=\left(1,2,3,4\right)$, and using `set.seed(150)`, generate the responses
+$$y_{i}=\boldsymbol{\theta}^{\top}\bar{\boldsymbol{x}}_{i}+u_{i},$$
+where $u_i$ is normal with mean zero and variance $1/2$.
+
+Using the generated data, fit the regression relationship
+$$y\approx\alpha+\boldsymbol{\beta}^{\top}\boldsymbol{x},$$
+by approximately solving the *least absolute deviation (LAD)* optimization problem
+$$\min_{\boldsymbol{\theta}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\sum_{i=1}^{n}\left|y_{i}-\alpha-\boldsymbol{\beta}^{\top}\boldsymbol{x}_{i}\right|\right\},$$
+using an MM algorithm that solves the problem
+$$\min_{\boldsymbol{\theta}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\sum_{i=1}^{n}\sqrt{\left(y_{i}-\alpha-\boldsymbol{\beta}^{\top}\boldsymbol{x}_{i}\right)^{2}+\epsilon}\right\},$$
+using $\epsilon=0.001$.
+
+Plot the data pairs $(\tau_i,y_i)$, the fitted ordinary least squares solution, the LAD solution, and the true model on the same graph.
