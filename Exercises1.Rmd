@@ -15,7 +15,7 @@ We begin by generating $n=100$ equally spaced points in the interval between $0$
 # Set the number n
 nn <- 100
 # Generate the points
-tau <- seq(from = 0, to = pi, length.out = nn)
+tau <- seq(0,pi,length.out=nn)
 ```
 
 We can inspect the elements of `tau` by simply calling the variable.
@@ -39,5 +39,50 @@ head(XX)
 Set $\alpha=1$ and $\boldsymbol{\beta}^\top=(1,1,1,1)$, and $\boldsymbol{\theta}^\top=(\alpha,\boldsymbol{\beta}^\top)$. Then, for each $i$, generate
 $$y_{i}=\boldsymbol{\theta}^{\top}\bar{\boldsymbol{x}}_{i}+u_{i},$$
 where $u_i$ is normally distributed with mean $0$ and variance $1/4$.
+```{r}
+# Make theta vector
+theta <- matrix(rep(1,5),5,1)
+# Set a random seed
+set.seed(200)
+# Generate the y values
+yy <- XX%*%theta + rnorm(nn,0,sqrt(1/4))
+```
 
+Let $\mathbf{y}^{\top}=\left(y_{1},\dots,y_{n}\right)$ and compute the ordinary least squares estimate $\boldsymbol{\theta}^*$ using the usual equation
+$$\boldsymbol{\theta}^*=\left(\mathbf{X}^{\top}\mathbf{X}\right)^{-1}\mathbf{X}^{\top}\mathbf{y}.$$
+```{r}
+# Compute the ordinary least squares estimate
+theta_ols <- solve(t(XX)%*%XX)%*%t(XX)%*%yy
+# Inspect the obtained estimates
+theta_ols
+```
 
+Plot the random data with respect to $y$ and $\tau$. Also plot the true model
+$$y\left(\tau\right)=\alpha+\beta_{1}\sin\left(\frac{\pi\tau_{i}}{2}\right)+\beta_{2}\cos\left(\frac{\pi\tau_{i}}{2}\right)+\beta_{3}\sin\left(\pi\tau_{i}\right)+\beta_{4}\cos\left(\pi\tau_{i}\right),$$
+versus the ordinary least squares-estimated model
+$$y^{*}\left(\tau\right)=\alpha^{*}+\beta_{1}^{*}\sin\left(\frac{\pi\tau_{i}}{2}\right)+\beta_{2}^{*}\cos\left(\frac{\pi\tau_{i}}{2}\right)+\beta_{3}^{*}\sin\left(\pi\tau_{i}\right)+\beta_{4}^{*}\cos\left(\pi\tau_{i}\right).$$
+```{r}
+# Plot the data points
+plot(tau,yy,col='grey',
+     xlab=expression(tau),ylab='y')
+# Plot a grid in the background
+grid()
+# Make a dummy tau sequence for your plotting device
+tt <- seq(0,pi,length.out = 1000)
+# Initialize a vector of alpha (theta[1]) to store the true model values
+y_true <- rep(theta[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:2) {
+  y_true <- y_true + theta[2*kk-1]*sin(pi/2*tt*kk) + theta[2*kk]*cos(pi/2*tt*kk)
+}
+# Plot the true curve on top of your points, in black
+lines(tt,y_true,col='black',lwd=2)
+# Initialize a vector of alpha* (theta_ols[1]) to store the ols model values
+y_ols <- rep(theta_ols[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:2) {
+  y_ols <- y_ols + theta_ols[2*kk-1]*sin(pi/2*tt*kk) + theta_ols[2*kk]*cos(pi/2*tt*kk)
+}
+# Plot the true curve on top of your points, in red
+lines(tt,y_ols,col='red',lwd=2,lty=2)
+```
