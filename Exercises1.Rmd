@@ -134,6 +134,7 @@ approx_obj <- function(theta) {
 ff_eps <- sapply(dum,approx_obj)
 # Plot the approximate objective function, in red
 lines(dum,ff_eps,col='red',lwd=2,lty=2)
+grid()
 ```
 
 We can majorize $f_\epsilon$ at $\theta^{\left(r-1\right)}$ using the majorizer
@@ -168,7 +169,7 @@ plot(0:RR,theta_seq,type='b',lwd=2,cex=1,
 grid()
 # Plot the approximate objective value sequence
 plot(0:RR,obj_seq,type='b',lwd=2,cex=1,
-     xlab='iteration',ylab='log-objective')
+     xlab='iteration',ylab='objective')
 grid()
 ```
 
@@ -184,9 +185,11 @@ median(yy)
 
 As with **Example 1** generate $n=100$ covariate vectors 
 $$\bar{\boldsymbol{x}}_{i}^{\top}=\left(1,\sin\left(\frac{\pi\tau_{i}}{2}\right),\cos\left(\frac{\pi\tau_{i}}{2}\right),\sin\left(\pi\tau_{i}\right),\cos\left(\pi\tau_{i}\right)\right),$$
-for $\tau_i$ equally spaced between $0$ and $\pi$, and put the vectors $\bar{\boldsymbol{x}}_{i}^{\top}$ into the matrix $bf{X}$.
+for $\tau_i$ equally spaced between $0$ and $\pi$, and put the vectors $\bar{\boldsymbol{x}}_{i}^{\top}$ into the matrix $\bf{X}$.
 
-Then setting $\boldsymbol{\theta}^{\top}=\left(\alpha,\beta_{1},\beta_{2},\beta_{3},\beta_{4}\right)=\left(1,2,3,4\right)$, and using `set.seed(150)`, generate the responses
+Then, setting 
+$$\boldsymbol{\theta}^{\top}=\left(\alpha,\boldsymbol{\beta}^{\top}\right)=\left(\alpha,\beta_{1},\beta_{2},\beta_{3},\beta_{4}\right)=\left(1,2,3,4\right),$$
+and using `set.seed(150)`, generate the responses
 $$y_{i}=\boldsymbol{\theta}^{\top}\bar{\boldsymbol{x}}_{i}+u_{i},$$
 where $u_i$ is normal with mean zero and variance $1/2$.
 
@@ -198,4 +201,6 @@ using an MM algorithm that solves the problem
 $$\min_{\boldsymbol{\theta}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\sum_{i=1}^{n}\sqrt{\left(y_{i}-\alpha-\boldsymbol{\beta}^{\top}\boldsymbol{x}_{i}\right)^{2}+\epsilon}\right\},$$
 using $\epsilon=0.001$.
 
-Plot the data pairs $(\tau_i,y_i)$, the fitted ordinary least squares solution, the LAD solution, and the true model on the same graph.
+Plot the data pairs $(\tau_i,y_i)$, the fitted ordinary least squares solution, the LAD solution, and the true model
+$$y\left(\tau\right)=\alpha+\beta_{1}\sin\left(\frac{\pi\tau}{2}\right)+\beta_{2}\cos\left(\frac{\pi\tau}{2}\right)+\beta_{3}\sin\left(\pi\tau\right)+\beta_{4}\cos\left(\pi\tau\right),$$
+on the same graph.
