@@ -184,7 +184,7 @@ median(yy)
 ## Question 1. Least absolute deviation regression
 
 As with **Example 1** generate $n=100$ covariate vectors 
-$$\bar{\boldsymbol{x}}_{i}^{\top}=\left(1,\sin\left(\frac{\pi\tau_{i}}{2}\right),\cos\left(\frac{\pi\tau_{i}}{2}\right),\sin\left(\pi\tau_{i}\right),\cos\left(\pi\tau_{i}\right)\right),$$
+$$\bar{\boldsymbol{x}}_{i}^{\top}=\left(1,\boldsymbol{x}_{i}^{\top}\right)=\left(1,\sin\left(\frac{\pi\tau_{i}}{2}\right),\cos\left(\frac{\pi\tau_{i}}{2}\right),\sin\left(\pi\tau_{i}\right),\cos\left(\pi\tau_{i}\right)\right),$$
 for $\tau_i$ equally spaced between $0$ and $\pi$, and put the vectors $\bar{\boldsymbol{x}}_{i}^{\top}$ into the matrix $\bf{X}$.
 
 Then, setting 
