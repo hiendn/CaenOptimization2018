@@ -73,7 +73,7 @@ dum <- seq(0,pi,length.out = 1000)
 y_true <- rep(theta[1],1000)
 # Add the sin and cos values to your model
 for (kk in 1:2) {
-  y_true <- y_true + theta[2*kk-1]*sin(pi/2*dum*kk) + theta[2*kk]*cos(pi/2*dum*kk)
+  y_true <- y_true + theta[2*kk]*sin(pi/2*dum*kk) + theta[2*kk+1]*cos(pi/2*dum*kk)
 }
 # Plot the true curve on top of your points, in black
 lines(dum,y_true,col='black',lwd=2)
@@ -81,7 +81,7 @@ lines(dum,y_true,col='black',lwd=2)
 y_ols <- rep(theta_ols[1],1000)
 # Add the sin and cos values to your model
 for (kk in 1:2) {
-  y_ols <- y_ols + theta_ols[2*kk-1]*sin(pi/2*dum*kk) + theta_ols[2*kk]*cos(pi/2*dum*kk)
+  y_ols <- y_ols + theta_ols[2*kk]*sin(pi/2*dum*kk) + theta_ols[2*kk+1]*cos(pi/2*dum*kk)
 }
 # Plot the fitted curve on top of your points, in red
 lines(dum,y_ols,col='red',lwd=2,lty=2)
@@ -137,6 +137,8 @@ lines(dum,ff_eps,col='red',lwd=2,lty=2)
 grid()
 ```
 
+> Notice the difference between the approximate objective function and the true objective function. How does the $\epsilon$ change the way in which the approximate objective function behaves? 
+
 We can majorize $f_\epsilon$ at $\theta^{\left(r-1\right)}$ using the majorizer
 $$f_{\epsilon}\left(\theta,\theta^{\left(r-1\right)}\right)=\frac{1}{2}\sum_{i=1}^{n}\sqrt{\left(y_{i}-\theta^{\left(r-1\right)}\right)^{2}+\epsilon}+\frac{1}{2}\sum_{i=1}^{n}\frac{\left(y_{i}-\theta\right)^{2}+\epsilon}{\sqrt{\left(y_{i}-\theta^{\left(r-1\right)}\right)^{2}+\epsilon}}.$$
 
@@ -181,7 +183,7 @@ theta_seq[RR+1]
 median(yy)
 ```
 
-## Question 1. Least absolute deviation regression
+## Exercise 1. Least absolute deviation regression
 
 As with **Example 1** generate $n=100$ covariate vectors 
 $$\bar{\boldsymbol{x}}_{i}^{\top}=\left(1,\boldsymbol{x}_{i}^{\top}\right)=\left(1,\sin\left(\frac{\pi\tau_{i}}{2}\right),\cos\left(\frac{\pi\tau_{i}}{2}\right),\sin\left(\pi\tau_{i}\right),\cos\left(\pi\tau_{i}\right)\right),$$
@@ -204,3 +206,286 @@ using $\epsilon=0.001$.
 Plot the data pairs $(\tau_i,y_i)$, the fitted ordinary least squares solution, the LAD solution, and the true model
 $$y\left(\tau\right)=\alpha+\beta_{1}\sin\left(\frac{\pi\tau}{2}\right)+\beta_{2}\cos\left(\frac{\pi\tau}{2}\right)+\beta_{3}\sin\left(\pi\tau\right)+\beta_{4}\cos\left(\pi\tau\right),$$
 on the same graph.
+
+## Example 3. Sparse regression and the LASSO
+
+We again generate $n=100$ equally spaced points in the interval between $0$ and $\pi$ and denote the points $\tau_i$ for $i=1,\dots,100$.
+```{r}
+# Set the number n
+nn <- 100
+# Generate the points
+tau <- seq(0,pi,length.out=nn)
+```
+
+However, we now wish to generate the matrix $\bf{X}$, where the $i$th row of $\bf{X}$ is
+$$\bar{\boldsymbol{x}}_{i}^{\top}=\left(1,\sin\left(\frac{\pi\tau_{i}}{2}\right),\cos\left(\frac{\pi\tau_{i}}{2}\right),\sin\left(\pi\tau_{i}\right),\cos\left(\pi\tau_{i}\right),\dots,\sin\left(\frac{\pi\tau_{i}}{2}K\right),\cos\left(\frac{\pi\tau_{i}}{2}K\right)\right),$$
+and $K=10$.
+```{r}
+# Begin by generating a column of 1s
+XX <- cbind(rep(1,nn))
+# Set K
+KK <- 10
+# Make a for loop to bind columns with cos and sin values of increasing frequency
+for (kk in 1:KK) {
+  XX <- cbind(XX,sin(pi/2*tau*kk),cos(pi/2*tau*kk))
+}
+```
+
+
+Set $\alpha=1$ and 
+$$\boldsymbol{\beta}^{\top}=(1,1,1,1,\underset{16}{\underbrace{0,\dots,0}}),$$
+and $\boldsymbol{\theta}^\top=(\alpha,\boldsymbol{\beta}^\top)$. Then, for each $i$, generate
+$$y_{i}=\boldsymbol{\theta}^{\top}\bar{\boldsymbol{x}}_{i}+u_{i},$$
+where $u_i$ is normally distributed with mean $0$ and variance $1/4$.
+```{r}
+# Make theta vector
+theta <- matrix(c(rep(1,5),rep(0,2*KK-4)),2*KK+1,1)
+# Set a random seed
+set.seed(200)
+# Generate the y values
+yy <- XX%*%theta + rnorm(nn,0,sqrt(1/4))
+```
+
+Compute the ordinary least squares estimate $\boldsymbol{\theta}^*$, using the notation $\mathbf{y}^{\top}=\left(y_{1},\dots,y_{n}\right)$, and the usual solution
+$$\boldsymbol{\theta}^*=\left(\mathbf{X}^{\top}\mathbf{X}\right)^{-1}\mathbf{X}^{\top}\mathbf{y}.$$
+```{r}
+# Compute the ordinary least squares estimate
+theta_ols <- solve(t(XX)%*%XX)%*%t(XX)%*%yy
+# Inspect the obtained estimates
+theta_ols
+```
+
+Plot the random data with respect to $y$ and $\tau$. Also plot the true model
+$$y\left(\tau\right)=\alpha+\sum_{k=1}^{K}\left[\beta_{2k}\sin\left(\frac{\pi\tau}{2}k\right)+\beta_{2k+1}\cos\left(\frac{\pi\tau}{2}k\right)\right],$$
+versus the ordinary least squares-estimated model
+$$y^{*}\left(\tau\right)=\alpha^{*}+\sum_{k=1}^{K}\left[\beta_{2k}^{*}\sin\left(\frac{\pi\tau}{2}k\right)+\beta_{2k+1}^{*}\cos\left(\frac{\pi\tau}{2}k\right)\right].$$
+```{r}
+# Plot the data points
+plot(tau,yy,col='grey',
+     xlab=expression(tau),ylab='y')
+# Plot a grid in the background
+grid()
+# Make a dummy tau sequence for your plotting device
+dum <- seq(0,pi,length.out = 1000)
+# Initialize a vector of alpha (theta[1]) to store the true model values
+y_true <- rep(theta[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:KK) {
+  y_true <- y_true + theta[2*kk]*sin(pi/2*dum*kk) + theta[2*kk+1]*cos(pi/2*dum*kk)
+}
+# Plot the true curve on top of your points, in black
+lines(dum,y_true,col='black',lwd=2)
+# Initialize a vector of alpha* (theta_ols[1]) to store the ols model values
+y_ols <- rep(theta_ols[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:KK) {
+  y_ols <- y_ols + theta_ols[2*kk]*sin(pi/2*dum*kk) + theta_ols[2*kk+1]*cos(pi/2*dum*kk)
+}
+# Plot the fitted curve on top of your points, in red
+lines(dum,y_ols,col='red',lwd=2,lty=2)
+```
+
+> Notice the difference between the ordinary least squares solution here, versus the one in Example 1. The estimated solution is overfitted to the data, here. What happens when we change the number of covariates in the model (i.e. $K$)? What happens when we change the sample size $n$? Can we obtain a sparse solution by arbitrarily increasing $n$?
+
+We seek to implement the *LASSO* in order to obtain a solution to the problem. That is, for some *penalty* value $\lambda>0$, we wish to obtain an estimator $\boldsymbol{\theta}^*$ that solves the optimization problem:
+$$\min_{\boldsymbol{\theta}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\sum_{i=1}^{n}\left(y_{i}-\boldsymbol{\theta}^{\top}\bar{\boldsymbol{x}}_{i}\right)^{2}+\lambda\sum_{j=1}^{d}\left|\beta_{j}\right|\right\}.$$
+
+We shall solve the problem by using the coordinate-wise MM algorithm. Let $\boldsymbol{\theta}^{\left(r\right)}$ denote the $r$th iterate of the MM algorithm. At iteration $j$, we update the $1$st coordinate of $\boldsymbol{\theta}$ by
+$$\theta_{1}^{\left(r\right)}=\theta_{1}^{\left(r-1\right)}+\frac{\sum_{i=1}^{n}\bar{x}_{i1}\left[y_{i}-\boldsymbol{\theta}^{\left(r-1\right)\top}\bar{\boldsymbol{x}}_{i}\right]}{\left(d+1\right)\sum_{i=1}^{n}\bar{x}_{i1}^{2}}.$$
+
+For $j=2,\dots,d+1$, let 
+$$a_{j}^{\left(r-1\right)}=\theta_{j}^{\left(r-1\right)}+\frac{\sum_{i=1}^{n}\bar{x}_{ij}\left[y_{i}-\boldsymbol{\theta}^{\left(r-1\right)\top}\bar{\boldsymbol{x}}_{i}\right]}{\left(d+1\right)\sum_{i=1}^{n}\bar{x}_{ij}^{2}},$$
+and
+$$b_{j}=\frac{\lambda/2}{\left(d+1\right)\sum_{i=1}^{n}\bar{x}_{ij}^{2}}.$$
+
+We can define the $r$th iteration update for coordinate $j>1$ as the following piecewise function:
+$$\theta_{j}^{\left(r\right)}=\begin{cases}
+a_{j}^{\left(r-1\right)}+b_{j} & \text{if }a_{j}^{\left(r-1\right)}<-b_{j}\text{,}\\
+0 & \text{if }\left|a_{j}^{\left(r-1\right)}\right|\le b_{j}\text{,}\\
+a_{j}^{\left(r-1\right)}-b_{j} & \text{if }a_{j}^{\left(r-1\right)}>b_{j}\text{.}
+\end{cases}.$$
+
+Run the MM algorithm for $R=2000$ iterations in order to fit the LASSO with $\lambda=10$. Initialize the algorithm using the least squares estimates.
+```{r}
+# Set the number of iterations R
+RR <- 2000
+# Set lambda
+lambda <- 10
+# Get the dimensionality of the vector theta
+DD <- length(theta)
+# Create a function that takes a (r-1)th iteration estimate and computes the rth MM iteration
+MM_step <- function(theta) {
+  # Make a dummy vector to store the output
+  output <- c()
+  # Compute the inner product t(theta)*bar{x}_i for each i and store in a vector
+  inner_prod <- XX%*%matrix(theta,length(theta),1)
+  # Compute the update for coordinate j=1
+  output[1] <- theta[1] + sum(XX[,1]*(yy-inner_prod))/(DD*sum(XX[,1]^2))
+  # Begin a loop to compute the updates for j>2
+  for (jj in 2:DD) {
+    # Compute a_j
+    aa <- theta[jj] + sum(XX[,jj]*(yy-inner_prod))/(DD*sum(XX[,jj]^2))
+    # Compute b_j
+    bb <- (lambda/2)/(DD*sum(XX[,jj]^2))
+    # Compute the update for theta_j
+    if (aa < -bb) {
+      output[jj] <- aa + bb
+    }
+    if (abs(aa) <= bb) {
+      output[jj] <- 0
+    }
+    if (aa > bb) {
+      output[jj] <- aa - bb
+    }
+  }
+  # Return output from the function
+  return(output)
+}
+# Initialize the algorithm with the ordinary least squares estimates
+theta_lasso <- theta_ols
+# Run the algorithm for R iterations
+for (rr in 1:RR) {
+  theta_lasso <- MM_step(theta_lasso)
+}
+# Print the output
+theta_lasso
+```
+
+> Notice that the solution now has values that are exactly zero. This implies that the LASSO problem is able to generate sparse solutions. Controlling the value of $\lambda$ allows for modification of the sparseness of the regression solution. Is the solution sufficiently sparse? What happens when we increase $\lambda$? 
+
+Plot the data, the true model
+$$y\left(\tau\right)=\alpha+\sum_{k=1}^{K}\left[\beta_{2k}\sin\left(\frac{\pi\tau}{2}k\right)+\beta_{2k+1}\cos\left(\frac{\pi\tau}{2}k\right)\right],$$
+the ordinary least squares estimated model, as well as the LASSO solution
+$$y^{\text{LASSO}}\left(\tau\right)=\alpha^{\text{LASSO}}+\sum_{k=1}^{K}\left[\beta_{2k}^{\text{LASSO}}\sin\left(\frac{\pi\tau}{2}k\right)+\beta_{2k+1}^{\text{LASSO}}\cos\left(\frac{\pi\tau}{2}k\right)\right].$$
+```{r}
+# Plot the data points
+plot(tau,yy,col='grey',
+     xlab=expression(tau),ylab='y')
+# Plot a grid in the background
+grid()
+# Make a dummy tau sequence for your plotting device
+dum <- seq(0,pi,length.out = 1000)
+# Initialize a vector of alpha (theta[1]) to store the true model values
+y_true <- rep(theta[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:KK) {
+  y_true <- y_true + theta[2*kk]*sin(pi/2*dum*kk) + theta[2*kk+1]*cos(pi/2*dum*kk)
+}
+# Plot the true curve on top of your points, in black
+lines(dum,y_true,col='black',lwd=2)
+# Initialize a vector of alpha* (theta_ols[1]) to store the ols model values
+y_ols <- rep(theta_ols[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:KK) {
+  y_ols <- y_ols + theta_ols[2*kk]*sin(pi/2*dum*kk) + theta_ols[2*kk+1]*cos(pi/2*dum*kk)
+}
+# Plot the fitted curve on top of your points, in red
+lines(dum,y_ols,col='red',lwd=2,lty=2)
+# Initialize a vector of alpha^lasso (theta_lasso[1]) to store the LASSO model values
+y_lasso <- rep(theta_lasso[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:KK) {
+  y_lasso <- y_lasso + theta_lasso[2*kk]*sin(pi/2*dum*kk) + theta_lasso[2*kk+1]*cos(pi/2*dum*kk)
+}
+# Plot the fitted curve on top of your points, in blue
+lines(dum,y_lasso,col='blue',lwd=2,lty=2)
+```
+
+> We notice that the estimated curve is a much smoother estimate of the true curve. What happens when we increase or decrease the value of $\lambda$?
+
+We can consider how the LASSO solution evolves as we increase the value of $\lambda$. This can be achieved by plotting the *solution curves* of each of the elements of the LASSO estimate for $\boldsymbol{\beta}$. We will do this for the sequence $\lambda$
+$$\left\{ \lambda_{0},\lambda_{1},\dots,\lambda_{40}\right\} =\left\{ 0,0.5,1,\dots,20\right\}.$$
+```{r}
+# Initialize the lambda sequence
+lambda_seq <- seq(0,20,by=0.5)
+# Initalize a matrix for storing the LASSO solution for each lambda
+theta_mat <- matrix(NA,length(lambda_seq),DD)
+# Put the OLS solution in the first row of the matrix
+theta_mat[1,] <- theta_ols
+# Begin a for loop that computes the solution for each lambda
+for (ll in 2:length(lambda_seq)) {
+  # Set lambda to the current value from the sequence
+  lambda <- lambda_seq[ll]
+  # Initialize the theta_lasso solution based on the previous solution from the matrix
+  theta_lasso <- theta_mat[ll-1,]
+  # We set R to be a smaller number than the previous case, since we are initializing closer to the optimal solution than before. This reduces the computational demand of the algorithm.
+  RR <- 1000
+  # Run the MM algorithm for R iterations
+  for (rr in 1:RR) {
+    theta_lasso <- MM_step(theta_lasso)
+  }
+  # Put the output into the storage matrix
+  theta_mat[ll,] <- theta_lasso 
+}
+# Initialize a plot using the smallest and the largest coefficient values from the matrix
+plot(c(min(lambda_seq),max(lambda_seq)),c(min(theta_mat[,-1]),max(theta_mat[,-1])),
+     type='n',xlab=expression(lambda),ylab=expression(beta))
+grid()
+# Draw the solution path in a different color for each of the regression coefficients
+for (jj in 2:DD) {
+  lines(lambda_seq,theta_mat[,jj],lwd=2,col=rainbow(DD-1)[jj])
+}
+```
+
+> Observe that the LASSO solution exhibits strong shrinkage for relatively small values of $\lambda$. Upon numerically inspecting the solution path, when can be say that the solution is sufficiently sparse? When can we say that the solution is over penalized?
+
+## Exercise 2. Ridge regression
+
+The LASSO is not the only linear regression method that can be used to overcome the *overfitting problem* observed when applying ordinary least squares in **Example 3**. An alternative method is the method of *ridge regression*.
+
+Using the same notation as in **Example 3**, the ridge regression estimate can be obtained by solving the problem
+$$\min_{\boldsymbol{\theta}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\sum_{i=1}^{n}\left(y_{i}-\boldsymbol{\theta}^{\top}\bar{\boldsymbol{x}}_{i}\right)^{2}+\lambda\sum_{j=1}^{d}\beta_{j}^{2}\right\},$$
+for some $\lambda>0$.
+
+If we write 
+$$\bar{\mathbf{I}}_{d}=\left[\begin{array}{cc}
+0 & 0\\
+0 & \mathbf{I}_{d}
+\end{array}\right],$$
+then ridge regression objective can be rewritten as
+$$f\left(\boldsymbol{\theta}\right)=\left(\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\right)^{\top}\left(\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\right)+\lambda\boldsymbol{\theta}^{\top}\bar{\mathbf{I}}_{d}\boldsymbol{\theta}.$$
+
+The first order condition is therefore
+$$\frac{\partial f}{\partial\boldsymbol{\theta}}=-2\mathbf{X}^{\top}\left(\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\right)+2\lambda\bar{\mathbf{I}}_{d}\boldsymbol{\theta}=\mathbf{0},$$
+with solution
+$$\boldsymbol{\theta}^{*}=\left(\mathbf{X}^{\top}\mathbf{X}+\lambda\bar{\mathbf{I}}_{d}\right)^{-1}\mathbf{X}^{\top}\mathbf{y}.$$
+
+In `R`, we can generate a $\bar{\mathbf{I}}_{d}$ for some $d>0$, for example $d=5$, as follows.
+```{r}
+# Declare a value for d
+dd <- 5
+# Make the I_bar matrix
+I_bar <- diag(c(0,rep(1,dd)))
+# Display the matrix
+I_bar
+```
+
+Using the information above, estimate the regression coefficients for the data from **Example 3** using ridge regression, using $\lambda=10$. Is the solution observably smoother than the ordinary least squares solution? Is the solution sparse? Also generate the solution paths for the ridge regression estimates with $\lambda$ set as
+$$\left\{ \lambda_{0},\lambda_{1},\dots,\lambda_{40}\right\} =\left\{ 0,0.5,1,\dots,20\right\}.$$
+Again, what can be said regarding shrinkage and sparsity?
+
+## Exercise 3. The elastic net
+
+The method of *elastic net* regression combines the *LASSO* and *ridge regression* together. The elastic net estimator is defined as the solution to the problem 
+$$\min_{\boldsymbol{\theta}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\sum_{i=1}^{n}\left(y_{i}-\boldsymbol{\theta}^{\top}\bar{\boldsymbol{x}}_{i}\right)^{2}+\lambda\sum_{j=1}^{d}\left|\beta_{j}\right|+\mu\sum_{j=1}^{d}\beta_{j}^{2}\right\},$$
+for $\lambda>0$ and $\mu>0$.
+
+Derive the component-wise MM algorithm for elastic net regression. Implement the algorithm on the data from **Exercise 3**, for $\lambda=\mu=5$. Comment on whether the elastic net is a *sparsity inducing* regularization method. Plot the solution path for the elastic net estimator for $\lambda$ set as
+$$\left\{ \lambda_{0},\lambda_{1},\dots,\lambda_{20}\right\} =\left\{ 0,0.5,1,\dots,10\right\},$$
+and $\mu=\lambda$.
+
+## Exercise 4. Calculating quantiles
+
+The median is not the only *quantile* that can be calculated using an MM algorithm. In a similar way to the median, the $q$th quantile of $n$ scalar observations $y_1,\dots,y_n$, for $q\in(0,1)$, can be defined as the solution to the convex optimization problem
+$$\min_{\theta}\left\{ f\left(\theta\right)=\sum_{i=1}^{n}g_{q}\left(y_{i}-\theta\right)\right\},$$
+where 
+$$g_{q}\left(\theta\right)=\begin{cases}
+q\theta & \text{if }\theta\ge0\text{,}\\
+-\left(1-q\right)\theta & \text{if }\theta<0\text{.}
+\end{cases}.$$
+
+Using the fact that $g_{q}\left(\upsilon\right)$ can be majorized at $\psi$ by 
+$$\bar{g}_{q}\left(\upsilon,\psi\right)=\frac{1}{4}\left[\frac{\upsilon^{2}}{\left|\psi\right|}+\left(4q-2\right)\upsilon+\left|\psi\right|\right],$$
+construct a majorizer for $f$ and derive an MM algorithm for computing the $q$th quantile of the data $y_1,\dots,y_n$. Implement the algorithm on the same data as that which is considered in **Example 2**.
+
+Comment on whether or not this algorithm has any flaws. Can an arbitrarily good approximation to the algorithm be proposed that remedies the flaws?
