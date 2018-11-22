@@ -190,7 +190,7 @@ $$\bar{\boldsymbol{x}}_{i}^{\top}=\left(1,\boldsymbol{x}_{i}^{\top}\right)=\left
 for $\tau_i$ equally spaced between $0$ and $\pi$, and put the vectors $\bar{\boldsymbol{x}}_{i}^{\top}$ into the matrix $\bf{X}$.
 
 Then, setting 
-$$\boldsymbol{\theta}^{\top}=\left(\alpha,\boldsymbol{\beta}^{\top}\right)=\left(\alpha,\beta_{1},\beta_{2},\beta_{3},\beta_{4}\right)=\left(1,2,3,4\right),$$
+$$\boldsymbol{\theta}^{\top}=\left(\alpha,\boldsymbol{\beta}^{\top}\right)=\left(\alpha,\beta_{1},\beta_{2},\beta_{3},\beta_{4}\right)=\left(1,2,3,4,5\right),$$
 and using `set.seed(150)`, generate the responses
 $$y_{i}=\boldsymbol{\theta}^{\top}\bar{\boldsymbol{x}}_{i}+u_{i},$$
 where $u_i$ is normal with mean zero and variance $1/2$.
