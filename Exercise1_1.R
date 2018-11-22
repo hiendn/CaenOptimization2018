@@ -31,9 +31,35 @@ epsilon <- 0.001
 RR <- 100
 for (rr in 1:RR) {
   # Compute the weight matrix 
-  WW <- diag(c(1/sqrt((yy-XX%*%matrix(theta_lad,5,1)+epsilon)^2)))
+  WW <- diag(c(1/sqrt((yy-XX%*%matrix(theta_lad,5,1))^2+epsilon)))
   # Compute the new iteration
   theta_lad <- solve(t(XX)%*%WW%*%XX)%*%t(XX)%*%WW%*%yy
 }
 # Print the east absolute deviation estimator
 theta_lad
+
+# Initialize a vector of alpha (theta[1]) to store the true model values
+y_true <- rep(theta[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:2) {
+  y_true <- y_true + theta[2*kk]*sin(pi/2*dum*kk) + theta[2*kk+1]*cos(pi/2*dum*kk)
+}
+# Plot the true curve on top of your points, in black
+lines(dum,y_true,col='black',lwd=2)
+# Initialize a vector of alpha* (theta_ridge[1]) to store the ridge model values
+y_lad <- rep(theta_lad[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:2) {
+  y_lad <- y_lad + theta_lad[2*kk]*sin(pi/2*dum*kk) + theta_lad[2*kk+1]*cos(pi/2*dum*kk)
+}
+# Plot the fitted curve on top of your points, in blue
+lines(dum,y_lad,col='blue',lwd=2,lty=2)
+
+# Initialize a vector of alpha* (theta_ols[1]) to store the ols model values
+y_ols <- rep(theta_ols[1],1000)
+# Add the sin and cos values to your model
+for (kk in 1:2) {
+  y_ols <- y_ols + theta_ols[2*kk]*sin(pi/2*dum*kk) + theta_ols[2*kk+1]*cos(pi/2*dum*kk)
+}
+# Plot the fitted curve on top of your points, in red
+lines(dum,y_ols,col='red',lwd=2,lty=2)
