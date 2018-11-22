@@ -201,7 +201,7 @@ by approximately solving the *least absolute deviation (LAD)* optimization probl
 $$\min_{\boldsymbol{\theta}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\sum_{i=1}^{n}\left|y_{i}-\alpha-\boldsymbol{\beta}^{\top}\boldsymbol{x}_{i}\right|\right\},$$
 using an MM algorithm that solves the problem
 $$\min_{\boldsymbol{\theta}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\sum_{i=1}^{n}\sqrt{\left(y_{i}-\alpha-\boldsymbol{\beta}^{\top}\boldsymbol{x}_{i}\right)^{2}+\epsilon}\right\},$$
-using $\epsilon=0.001$.
+using $\epsilon=0.001$ and the ordinary least squares solution as an initialization.
 
 Plot the data pairs $(\tau_i,y_i)$, the fitted ordinary least squares solution, the LAD solution, and the true model
 $$y\left(\tau\right)=\alpha+\beta_{1}\sin\left(\frac{\pi\tau}{2}\right)+\beta_{2}\cos\left(\frac{\pi\tau}{2}\right)+\beta_{3}\sin\left(\pi\tau\right)+\beta_{4}\cos\left(\pi\tau\right),$$
