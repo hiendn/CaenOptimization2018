@@ -17,7 +17,7 @@ Register for the course at https://evento.renater.fr/survey/cours-optimization-t
 ## Exercises
 
 **Exercises 1** can be accessed via the link:
-http://htmlpreview.github.io/?https://github.com/hiendn/CaenOptimization2018/blob/master/Exercises1.html.
+http://htmlpreview.github.io/?https://github.com/hiendn/CaenOptimization2018/blob/master/Exercises1.html. Solution codes are available in the respository and are labelled as *exercise1_X.R*.
 
 ## Links to useful resources
 Matrix Cookbook: https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf.
