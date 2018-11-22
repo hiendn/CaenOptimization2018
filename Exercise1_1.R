@@ -36,3 +36,4 @@ for (rr in 1:RR) {
   theta_lad <- solve(t(XX)%*%WW%*%XX)%*%t(XX)%*%WW%*%yy
 }
 # Print the east absolute deviation estimator
+theta_lad
