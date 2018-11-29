@@ -480,6 +480,6 @@ grid()
 It is not difficult to conclude that the data permits a seperating hyperplane that depends on only one of the two covariate elements $x_1$ and $x_2$. That is, the estimated solution should be *sparse* and have either $\widehat{\beta}_{1}=0$ or $\widehat{\beta}_{2}=0$.
 
 For some level of $\lambda>0$ it is possible to obtain such a solution by solving the *LASSO regularized SVM problem*:
-$$\min_{\boldsymbol{\theta}\in\mathbb{R}^{d+1}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\frac{1}{n}\sum_{i=1}^{n}\left[1-y_{i}\left(\alpha+\boldsymbol{\beta}^{\top}\boldsymbol{x}_{i}\right)\right]_{+}^{2}+\lambda\sum_{j=1}^{d}\left|\beta_{j}\right|\right\}.$$
+$$\min_{\boldsymbol{\theta}\in\mathbb{R}^{d+1}}\text{ }\left\{ f\left(\boldsymbol{\theta}\right)=\frac{1}{n}\sum_{i=1}^{n}\left[1-y_{i}\left(\alpha+\boldsymbol{\beta}^{\top}\boldsymbol{x}_{i}\right)\right]_{+}+\lambda\sum_{j=1}^{d}\left|\beta_{j}\right|\right\}.$$
 
 Using the code from **Example 1** and from **Exercises 1**, deduce an MM algorithm for solving this problem.
