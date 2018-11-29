@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 # Optimization Theory for Statistics and Machine Learning
 Course taught by Hien Nguyen, La Trobe University, at the University of Caen, Normandy, from 14 November to 6 December, 2018.
 
