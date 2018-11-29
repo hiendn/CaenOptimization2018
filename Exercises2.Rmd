@@ -454,7 +454,7 @@ Obtain the least squares optimal seperating hyperplane for the data from **Examp
 
 ## Exercise 4. Sparse SVM
 
-Consider the following data. Set the random seed using `set.seed(3000)`. For $n=200$, let $y_{1},\dots y_{n/2}=-1$ and $y_{n/2+1},\dots y_{n}=1$. For each $i$ generate $\boldsymbol{x}_{i}$, if $y_i=-1$, then from a multivariate normal distribution with mean $\boldsymbol{\mu}_1^\top=(0,-1)$ and covariance $\bf{I}$, if $y_i=1$, then from a multivariate normal distribution with mean $\boldsymbol{\mu}_2^\top=(0,1)$ and covariance $\bf{I}$.
+Consider the following data. Set the random seed using `set.seed(3000)`. For $n=200$, let $y_{1},\dots y_{n/2}=-1$ and $y_{n/2+1},\dots y_{n}=1$. For each $i$ generate $\boldsymbol{x}_{i}$, if $y_i=-1$, then from a multivariate normal distribution with mean $\boldsymbol{\mu}_1^\top=(-1,0)$ and covariance $\bf{I}$, if $y_i=1$, then from a multivariate normal distribution with mean $\boldsymbol{\mu}_2^\top=(1,0)$ and covariance $\bf{I}$.
 
 A plot of the data is provided below.
 
