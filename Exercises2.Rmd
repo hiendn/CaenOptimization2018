@@ -257,7 +257,7 @@ Using these facts, derive a Newton's algorithm for the logistic regression probl
 
 In the examples so far, the data that have been used as examples have all been clearly seperable via a linear hyperplane. However, data are often complex and linear seperation is often not possible. We consider for example the following situation.
 
-Let $n=300$ and let $y_{1},\dots y_{n/3}=-1$, $y_{n/3+1},\dots y_{2n/3}=1$, and $y_{2n/3+1},\dots y_{n}=-1$. For $i=1,...,n/3$, generate $\boldsymbol{x}_{i}$ from a multivariate normal distribution with mean $\boldsymbol{\mu}_1^\top=(-2,-2)$ and covariance $\bf{I}$. For $i=n/3+1,...,2n/3$, generate $\boldsymbol{x}_{i}$ from a multivariate normal distribution with mean $\boldsymbol{\mu}_2^\top=(0,0)$ and covariance $\bf{I}$. And for $i=n/3+1,...,2n/3$, generate $\boldsymbol{x}_{i}$ from a multivariate normal distribution with mean $\boldsymbol{\mu}_3^\top=(2,2)$ and covariance $\bf{I}$.
+Let $n=300$ and let $y_{1},\dots y_{n/3}=-1$, $y_{n/3+1},\dots y_{2n/3}=1$, and $y_{2n/3+1},\dots y_{n}=-1$. For $i=1,...,n/3$, generate $\boldsymbol{x}_{i}$ from a multivariate normal distribution with mean $\boldsymbol{\mu}_1^\top=(-2,-2)$ and covariance $\bf{I}$. For $i=n/3+1,...,2n/3$, generate $\boldsymbol{x}_{i}$ from a multivariate normal distribution with mean $\boldsymbol{\mu}_2^\top=(0,0)$ and covariance $\bf{I}$. And for $i=n/3+1,...,n$, generate $\boldsymbol{x}_{i}$ from a multivariate normal distribution with mean $\boldsymbol{\mu}_3^\top=(2,2)$ and covariance $\bf{I}$.
 
 The difficulty in this problem becomes apparent once the data has been plotted.
 
