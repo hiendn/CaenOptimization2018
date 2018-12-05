@@ -22,16 +22,19 @@ Register for the course at https://evento.renater.fr/survey/cours-optimization-t
   - Slides 105--131.
 - 29 November 2018
   - Exercises 2.
+- 05 December 2018
+  - Slides 132--173.
 
 ## Exercises
 
 **Exercises 1** can be accessed via the link:
 http://htmlpreview.github.io/?https://github.com/hiendn/CaenOptimization2018/blob/master/Exercises1.html. Solution codes are available in the respository and are labelled as *exercise1_X.R*.
 
-**Exercises 2** is available as the PDF document *Exercises2.pdf*. Solution codes are available in the repository and are labelled as *exercise2_X.R*.
+**Exercises 2** is available as the PDF document *Exercises2.pdf*.
 
 ## Links to useful resources
 Matrix Cookbook: https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf.
+A nice introduction to mixed-effects models and applications: https://stats.idre.ucla.edu/other/mult-pkg/introduction-to-linear-mixed-models/.
 
 ## Error reporting
 If you find any errors in the slides, please let me know via the issues page of the repository: https://github.com/hiendn/CaenOptimization2018/issues.
