@@ -373,3 +373,33 @@ for (ii in 1:nn) {
 # Add a grid
 grid()
 ```
+
+## Exercise 3. Sleepstudy data
+
+Consider the `sleepstudy` data from the `lme4` package. Load the data by using the `data(sleepstudy)` command.
+
+The data measures the $n=18$ subjects $i$ that are measured at day $t$ for their *reaction time* $Y_{it}$. Here, there are $t=0,\dots,m$ where $m=9$ is the total number of days.
+
+We begin by plotting the relationship between reaction time and days for each individual.
+```{r}
+# Load sleepstudy data
+data(sleepstudy)
+# Get each of the different subject labels
+unique_sub <- unique(sleepstudy$Subject)
+# Construct an empty plot with appropriate size window
+plot(c(0,9),c(min(sleepstudy$Reaction),max(sleepstudy$Reaction)),
+     xlab='Day',ylab='Reaction time')
+# For loop to plot data for each subject
+for (ss in 1:18) {
+  # Plot the data for individual subject
+  points(0:9,
+         sleepstudy$Reaction[sleepstudy$Subject==unique_sub[ss]],
+         col=rainbow(18)[ss])
+}
+# Add a grid
+grid()
+```
+
+> From the data, does it appear as if all of the subjects follow the same mean relationship between reaction time and days into the experiment? Would a linear regression model be appropriate here or should we use a repeated measures model?
+
+If you concluded that a repeated measurement model should be used, then utilize the code from **Example 3** to fit the same model. Plot the data with the fitted mean line and individual subject line obtained from the fitted object. 
