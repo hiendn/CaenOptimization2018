@@ -24,6 +24,7 @@ Register for the course at https://evento.renater.fr/survey/cours-optimization-t
   - Exercises 2.
 - 05 December 2018
   - Slides 132--173.
+  - Exercises 3.
 
 ## Exercises
 
