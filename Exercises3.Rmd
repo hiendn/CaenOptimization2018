@@ -370,6 +370,9 @@ for (ii in 1:nn) {
   lines(1:nn,1+coeffs[ii,1]+(1+coeffs[ii,2])*(1:nn),
         col=rainbow(nn)[ii],lwd=2,lty=2)
 }
+# Plot fitted mean line
+lines(1:nn, fixef(lmm)[1] + fixef(lmm)[2]*(1:nn),
+      lwd=2,lty=2)
 # Add a grid
 grid()
 ```
