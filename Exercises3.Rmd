@@ -4,8 +4,8 @@ header-includes:
   - \newcommand{\bm}{\boldsymbol}
 date: "06/12/2018"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}

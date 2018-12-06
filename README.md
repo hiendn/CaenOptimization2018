@@ -32,6 +32,9 @@ http://htmlpreview.github.io/?https://github.com/hiendn/CaenOptimization2018/blo
 
 **Exercises 2** is available as the PDF document *Exercises2.pdf*.
 
+**Exercises 3** is available as the PDF document *Exercises3.pdf*.
+
+
 ## Links to useful resources
 Matrix Cookbook: https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf.
 A nice introduction to mixed-effects models and applications: https://stats.idre.ucla.edu/other/mult-pkg/introduction-to-linear-mixed-models/.
